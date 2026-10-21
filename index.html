@@ -457,7 +457,6 @@
 
 <a class="wa" href="https://api.whatsapp.com/send/?phone=%2B17872238438" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg><span>Chatea con nosotros</span></a>
 
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
@@ -579,7 +578,7 @@ $('#pBar').addEventListener('click',e=>{if(!audio.duration)return;const r=e.curr
 
 /* ---------- CANVASES: hero wave + mini viz + vs bars ---------- */
 const wave=$('#wave'),wc=wave.getContext('2d'),viz=$('#viz'),vc=viz.getContext('2d');
-function size(){const d=Math.min(2,devicePixelRatio||1);[wave,viz].forEach(c=>{c.width=c.clientWidth*d;c.height=c.clientHeight*d})}
+function size(){const d=Math.min(2,devicePixelRatio||1);wave.width=Math.min(1920,wave.clientWidth);wave.height=wave.clientHeight*(wave.width/wave.clientWidth);viz.width=viz.clientWidth*d;viz.height=viz.clientHeight*d}
 size();addEventListener('resize',size);
 let t0=0,heroVisible=true;
 new IntersectionObserver(([e])=>heroVisible=e.isIntersecting).observe($('#inicio'));
@@ -592,7 +591,7 @@ function frame(t){
     let amp=d?(d.slice(2,40).reduce((a,b)=>a+b,0)/38/255):0;
     for(let k=0;k<3;k++){
       wc.beginPath();wc.lineWidth=(k===0?2.4:1.2)*(W/wave.clientWidth);wc.strokeStyle=g;wc.globalAlpha=k===0?.95:.35;
-      for(let x=0;x<=W;x+=4){const p=x/W;const env=Math.sin(p*Math.PI);
+      for(let x=0;x<=W;x+=6){const p=x/W;const env=Math.sin(p*Math.PI);
         const y=H*.62+Math.sin(p*(9+k*3)+t/(700+k*240))*H*(.08+amp*.38)*env+Math.sin(p*31+t/310)*H*(.015+amp*.12)*env;
         x?wc.lineTo(x,y):wc.moveTo(x,y)}
       wc.stroke()}
@@ -659,7 +658,7 @@ if(RM||!window.gsap||!window.ScrollTrigger)fillWords(1);
 $$('main section:not(.hero) h2').forEach(h=>{if(h.children.length)return;h.innerHTML=h.textContent.trim().split(/\s+/).map(w=>`<span class="sw"><i>${w}</i></span>`).join(' ');h.classList.add('split')});
 
 /* ---------- POINTER EFFECTS ---------- */
-const fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
+let heroQX,heroQY;const fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
 if(fine&&!RM){
   document.body.classList.add('has-cursor');
   const cur=$('#cursor'),dot=$('.c-dot'),ring=$('.c-ring'),lab=$('.c-label');
@@ -673,7 +672,7 @@ if(fine&&!RM){
   });
   document.addEventListener('mouseleave',()=>cur.style.opacity=0);document.addEventListener('mouseenter',()=>cur.style.opacity=1);
   // hero spotlight
-  const hero=$('.hero');hero.addEventListener('mousemove',e=>{const r=hero.getBoundingClientRect();hero.style.setProperty('--mx',(e.clientX-r.left)+'px');hero.style.setProperty('--my',(e.clientY-r.top)+'px');if(window.gsap)gsap.to('#heroImg',{x:(e.clientX/innerWidth-.5)*-30,y:(e.clientY/innerHeight-.5)*-20,duration:1.2,ease:'power3.out',overwrite:'auto'})});
+  const hero=$('.hero');hero.addEventListener('mousemove',e=>{const r=hero.getBoundingClientRect();hero.style.setProperty('--mx',(e.clientX-r.left)+'px');hero.style.setProperty('--my',(e.clientY-r.top)+'px');if(window.gsap){heroQX=heroQX||gsap.quickTo('#heroImg','x',{duration:1.2,ease:'power3.out'});heroQY=heroQY||gsap.quickTo('#heroImg','y',{duration:1.2,ease:'power3.out'});heroQX((e.clientX/innerWidth-.5)*-30);heroQY((e.clientY/innerHeight-.5)*-20)}});
   // magnetic buttons
   $$('.btn,.pbtn').forEach(b=>{b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.22}px,${(e.clientY-r.top-r.height/2)*.3}px)`});b.addEventListener('mouseleave',()=>b.style.transform='')});
   // tilt
@@ -685,15 +684,14 @@ if(fine&&!RM){
 
 /* ---------- SMOOTH SCROLL + GSAP MOTION ---------- */
 let lenis=null;
-if(window.Lenis&&!RM){lenis=new Lenis({lerp:.09,wheelMultiplier:1});}
-const goTo=(el)=>{if(!el)return;if(lenis)lenis.scrollTo(el,{offset:-70,duration:1.4});else el.scrollIntoView({behavior:RM?'auto':'smooth'})};
+
+const goTo=(el)=>{if(!el)return;scrollTo({top:el.getBoundingClientRect().top+scrollY-70,behavior:RM?'auto':'smooth'})};
 document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#"]');if(!a||e.defaultPrevented)return;const id=a.getAttribute('href').slice(1);if(!id||id.startsWith('svc-'))return;const t=document.getElementById(id);if(!t)return;e.preventDefault();goTo(t)});
 $$('.ticker a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();selectTab(a.getAttribute('href').slice(5));goTo($('#servicios'))},true));
 const mmObs=new MutationObserver(()=>{if(lenis){document.body.style.overflow?lenis.stop():lenis.start()}});mmObs.observe(document.body,{attributes:true,attributeFilter:['style']});
 
 if(window.gsap&&window.ScrollTrigger&&!RM){
   gsap.registerPlugin(ScrollTrigger);
-  if(lenis){lenis.on('scroll',ScrollTrigger.update);gsap.ticker.add(t=>lenis.raf(t*1000));gsap.ticker.lagSmoothing(0)}
   const seen=document.documentElement.classList.contains('seen');
   const tl=gsap.timeline({defaults:{ease:'expo.out'},delay:seen?0:1.95});
   tl.from('#heroImg',{scale:1.35,opacity:0,duration:2.4})
