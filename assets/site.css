@@ -455,3 +455,16 @@ body.has-player .wa{bottom:calc(100px + env(safe-area-inset-bottom,0px))}
 }
 .hero-inner{max-width:1000px}
 main section[id]{scroll-margin-top:72px}
+
+/* ===== Shared subpage pieces (portal, cita, empleos) ===== */
+.p-hero{padding-block:clamp(130px,16vh,180px) clamp(50px,7vw,90px);position:relative;overflow:hidden;isolation:isolate}
+.p-hero::after{content:"";position:absolute;z-index:-1;width:900px;height:900px;right:-300px;top:-420px;border-radius:50%;background:var(--grad);filter:blur(120px);opacity:.35}
+.p-hero h1{font-size:clamp(48px,9vw,128px);font-weight:900;font-stretch:122%;line-height:.9;letter-spacing:-.035em}
+.p-hero h1 .line{display:block;overflow:hidden;padding-bottom:.05em}
+.p-hero h1 .line>span{display:inline-block}
+.p-hero .lead{margin-top:22px}
+.f select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 22px) 50%,calc(100% - 16px) 50%;background-size:6px 6px;background-repeat:no-repeat;padding-right:44px}
+.f select option{background:#17111A;color:#F5EEF2}
+.back{display:inline-flex;align-items:center;gap:8px;font:600 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;text-decoration:none;color:var(--muted);margin-bottom:26px}
+.back svg{width:16px;height:16px;transform:rotate(180deg)}
+.back:hover{color:var(--text)}
