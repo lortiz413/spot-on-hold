@@ -363,7 +363,6 @@
     </div>
   </div>
   <div class="logo-rail rv"><div class="logo-track" id="logos1"></div></div>
-  <div class="logo-rail rev rv" style="margin-top:18px"><div class="logo-track" id="logos2"></div></div>
   <div class="wrap">
     <div class="cta-strip rv">
       <div><span class="eyebrow">Tu turno</span><h3 style="margin-top:14px">Más de 1,000 empresas se benefician de nuestros servicios. ¡Solo faltas tú!</h3></div>
@@ -542,7 +541,7 @@ document.addEventListener('click',e=>{const a=e.target.closest('[data-pick]');if
 /* ---------- CLIENT LOGOS ---------- */
 const LOGOS=[['logo-acueductos','Autoridad de Acueductos y Alcantarillados'],['logo-global','Global'],['farmacias','Farmacias'],['logo-berrios','Berríos'],['logo-mr-special','Mr. Special'],['logo-inter','Universidad Interamericana'],['triangle','Triangle'],['logo-oriental','Oriental'],['rincon','Cooperativa de Rincón'],['logo-san-lucas','Hospital San Lucas']];
 const mk=arr=>arr.concat(arr).map(([f,n],k)=>`<div class="client"${k>=arr.length?' aria-hidden="true"':''}><img src="assets/clientes/${f}.webp" alt="${k>=arr.length?'':n}" loading="lazy"></div>`).join('');
-$('#logos1').innerHTML=mk(LOGOS);$('#logos2').innerHTML=mk(LOGOS.slice(5).concat(LOGOS.slice(0,5)));
+$('#logos1').innerHTML=mk(LOGOS);
 $('#ticker').innerHTML+= $('#ticker').innerHTML.replace(/<span class="ticker-item">/g,'<span class="ticker-item" aria-hidden="true">').replace(/<a /g,'<a tabindex="-1" ');
 
 /* ---------- TIMELINE ---------- */
